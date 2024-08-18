@@ -6,28 +6,13 @@ trigger: none
 variables:
   resourceGroupName: 'rg-bicep-demo-0017'
   location: 'westeurope'
-  webAppName: 'bicep0017'
+  webAppName: 'bicep0017-$(Build.BuildId)' # Adding a unique identifier
   templateFile: '01-bicep-webapp/webapp-linux.bicep'
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-
-- task: AzureCLI@2
-  displayName: Check and Delete Existing Web App if Exists
-  inputs:
-    azureSubscription: 'Free Trial(abdc1047-6e87-4b5a-80a0-c91483bc5655)'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      existingApp=$(az webapp show --resource-group $(resourceGroupName) --name $(webAppName) --query name --output tsv)
-      if [ "$existingApp" == "$(webAppName)" ]; then
-        echo "Web app $(webAppName) exists. Deleting..."
-        az webapp delete --resource-group $(resourceGroupName) --name $(webAppName)
-      else
-        echo "Web app $(webAppName) does not exist."
-      fi
 
 - task: AzureCLI@2
   displayName: Preview Bicep Changes
